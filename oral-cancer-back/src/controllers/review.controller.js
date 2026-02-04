@@ -1,28 +1,44 @@
 const pool = require('../db');
 
-exports.getPendingReviews = async (_, res) => {
+exports.getPendingReviews = async (req, res) => {
   const [rows] = await pool.query(`
-    SELECT r.id AS review_id, p.risk, p.confidence, i.image_path
-    FROM reviews r
-    JOIN predictions p ON r.prediction_id = p.id
-    JOIN images i ON p.image_id = i.id
-    WHERE r.status = 'PENDING'
+    SELECT
+      review_id,
+      patient_name,
+      patient_phone,
+      age,
+      visit_date,
+      image_url,
+      risk,
+      confidence
+    FROM review_queue
+    WHERE status = 'PENDING'
+    ORDER BY created_at DESC
   `);
+
   res.json(rows);
 };
 
-exports.submitReview = async (req, res) => {
-  const { review_id, notes } = req.body;
-  const doctorId = req.user.userId;
+exports.completeReview = async (req, res) => {
+  const { reviewId } = req.params;
+  const { notes } = req.body;
+  const doctorId = req.user.id;
 
-  const [result] = await pool.query(`
+  await db.query(`
     UPDATE reviews
-    SET doctor_id=?, notes=?, status='REVIEWED', reviewed_at=NOW()
-    WHERE id=? AND status='PENDING'
-  `, [doctorId, notes, review_id]);
+    SET
+      notes = ?,
+      doctor_id = ?,
+      status = 'REVIEWED',
+      reviewed_at = NOW()
+    WHERE id = ?
+  `, [notes, doctorId, reviewId]);
 
-  if (result.affectedRows === 0)
-    return res.status(409).json({ error: 'Already reviewed' });
+  await db.query(`
+    UPDATE review_queue
+    SET status = 'REVIEWED'
+    WHERE review_id = ?
+  `, [reviewId]);
 
-  res.json({ message: 'Review submitted' });
+  res.json({ message: 'Review completed' });
 };

@@ -30,10 +30,11 @@ exports.createOrGetPatient = async (req, res) => {
       });
     }
 
+    // console.log(req.user.id + " is creating patient");
     // 2️⃣ Create new patient
     const [result] = await pool.query(
-      'INSERT INTO patients (name, phone, gender) VALUES (?, ?, ?)',
-      [name, phone, gender]
+      'INSERT INTO patients (name, phone, created_by, gender) VALUES (?, ?, ?, ?)',
+      [name, phone, req.user.userId ,gender]
     );
 
     res.json({

@@ -8,7 +8,7 @@ exports.getPendingReviews = async (req, res) => {
         p.id AS prediction_id,
         p.risk,
         p.confidence,
-        i.image_path,
+        i.id,
         v.id AS visit_id,
         pt.name AS patient_name,
         pt.phone

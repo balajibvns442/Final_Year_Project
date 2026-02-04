@@ -7,7 +7,8 @@ const authRoutes = require('./routes/auth.routes');
 const patientRoutes = require('./routes/patient.routes');
 const visitRoutes = require('./routes/visit.routes');
 const imageRoutes = require('./routes/image.routes');
-const reviewRoutes = require('./routes/review.routes')
+const reviewRoutes = require('./routes/review.routes');
+const doctorRoutes = require('./routes/doctor.routes');
 
 app.use(cors());
 app.use(express.json());
@@ -17,6 +18,7 @@ app.use('/patients', patientRoutes);
 app.use('/visits', visitRoutes);
 app.use('/images', imageRoutes);
 app.use('/reviews', reviewRoutes);
+app.use('/doctor', doctorRoutes);
 
 
 app.get('/health', (req, res) => {

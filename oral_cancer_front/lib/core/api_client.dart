@@ -1,4 +1,6 @@
 import 'dart:convert';
+// import 'dart:nativewrappers/_internal/vm/lib/typed_data_patch.dart';
+import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'constants.dart';
 import 'auth_storage.dart';
@@ -34,4 +36,15 @@ class ApiClient {
       headers: headers,
     );
   }
+
+  static Future<Uint8List> getImageBytes(String endpoint) async {
+    final response = await get(endpoint, auth: true);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to load image');
+    }
+
+    return response.bodyBytes;
+  }
+
 }

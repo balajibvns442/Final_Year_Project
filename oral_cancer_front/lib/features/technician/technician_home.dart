@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../widgets/logout_button.dart';
+import 'patient_screen.dart';
 
 class TechnicianHome extends StatelessWidget {
   const TechnicianHome({super.key});
@@ -6,11 +8,23 @@ class TechnicianHome extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Technician Dashboard")),
-      body: const Center(
-        child: Text(
-          "Technician logged in",
-          style: TextStyle(fontSize: 18),
+      appBar: AppBar(
+        title: const Text("Technician Dashboard"),
+        actions: [
+          LogoutButton() ,
+        ],
+      ),
+      body: Center(
+        child: ElevatedButton(
+          child: const Text("Add / Find Patient"),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (_) => const PatientScreen(),
+              ),
+            );
+          },
         ),
       ),
     );

@@ -12,6 +12,7 @@ exports.authenticate = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; // { userId, role }
+    console.log('user id is : ', req.user.userId);
     console.log('Authenticated user:', req.user);
     next();
   } catch (err) {

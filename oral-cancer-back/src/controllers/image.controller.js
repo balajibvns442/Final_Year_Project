@@ -57,51 +57,51 @@ exports.uploadImage = async (req, res) => {
 
     // after image, prediction, review are created
 
-    const reviewId = reviewResult.insertId;
+    // const reviewId = reviewResult.insertId;
 
-    // fetch snapshot data ONCE (single join, one-time cost)
-    const [rows] = await db.query(`
-  SELECT
-    p.name AS patient_name,
-    p.phone AS patient_phone,
-    v.age,
-    DATE(v.visit_date) AS visit_date,
-    i.image_path,
-    pr.risk,
-    pr.confidence
-  FROM predictions pr
-  JOIN images i ON pr.image_id = i.id
-  JOIN visits v ON i.visit_id = v.id
-  JOIN patients p ON v.patient_id = p.id
-  WHERE pr.id = ?
-`, [predictionId]);
+//     // fetch snapshot data ONCE (single join, one-time cost)
+//     const [rows] = await db.query(`
+//   SELECT
+//     p.name AS patient_name,
+//     p.phone AS patient_phone,
+//     v.age,
+//     DATE(v.visit_date) AS visit_date,
+//     i.image_path,
+//     pr.risk,
+//     pr.confidence
+//   FROM predictions pr
+//   JOIN images i ON pr.image_id = i.id
+//   JOIN visits v ON i.visit_id = v.id
+//   JOIN patients p ON v.patient_id = p.id
+//   WHERE pr.id = ?
+// `, [predictionId]);
 
-    const snap = rows[0];
+//     const snap = rows[0];
 
-    // insert snapshot
-    await db.query(`
-  INSERT INTO review_queue (
-    review_id,
-    prediction_id,
-    patient_name,
-    patient_phone,
-    age,
-    visit_date,
-    image_url,
-    risk,
-    confidence
-  ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-`, [
-      reviewId,
-      predictionId,
-      snap.patient_name,
-      snap.patient_phone,
-      snap.age,
-      snap.visit_date,
-      snap.image_path,
-      snap.risk,
-      snap.confidence
-    ]);
+//     // insert snapshot
+//     await db.query(`
+//   INSERT INTO review_queue (
+//     review_id,
+//     prediction_id,
+//     patient_name,
+//     patient_phone,
+//     age,
+//     visit_date,
+//     image_url,
+//     risk,
+//     confidence
+//   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+// `, [
+//       reviewId,
+//       predictionId,
+//       snap.patient_name,
+//       snap.patient_phone,
+//       snap.age,
+//       snap.visit_date,
+//       snap.image_path,
+//       snap.risk,
+//       snap.confidence
+//     ]);
 
 
 

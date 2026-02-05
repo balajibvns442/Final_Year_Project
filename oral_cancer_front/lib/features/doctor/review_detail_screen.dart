@@ -24,7 +24,7 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
     });
 
     final res = await ApiClient.post(
-      '/reviews/${widget.review['review_id']}/complete',
+      '/reviews/${widget.review['review_id']}',
       {
         'notes': _notesCtrl.text.trim(),
       },
@@ -119,7 +119,8 @@ class _ReviewDetailScreenState extends State<ReviewDetailScreen> {
                 color: _riskColor(r['risk']),
               ),
             ),
-            const SizedBox(height: 4),
+            const SizedBox(height: 10),
+
             Text(
               "Confidence: ${(r['confidence'] * 100).toStringAsFixed(1)}%",
             ),

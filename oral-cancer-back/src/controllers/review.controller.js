@@ -22,9 +22,11 @@ exports.getPendingReviews = async (req, res) => {
 exports.completeReview = async (req, res) => {
   const { reviewId } = req.params;
   const { notes } = req.body;
-  const doctorId = req.user.id;
+  const doctorId = req.user.userId;
 
-  await db.query(`
+  console.log('Completing review', { reviewId, doctorId, notes });
+
+  await pool.query(`
     UPDATE reviews
     SET
       notes = ?,
@@ -34,11 +36,11 @@ exports.completeReview = async (req, res) => {
     WHERE id = ?
   `, [notes, doctorId, reviewId]);
 
-  await db.query(`
-    UPDATE review_queue
-    SET status = 'REVIEWED'
-    WHERE review_id = ?
-  `, [reviewId]);
+  // await db.query(`
+  //   UPDATE review_queue
+  //   SET status = 'REVIEWED'
+  //   WHERE review_id = ?
+  // `, [reviewId]);
 
   res.json({ message: 'Review completed' });
 };

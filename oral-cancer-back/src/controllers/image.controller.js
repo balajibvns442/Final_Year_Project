@@ -66,6 +66,7 @@ exports.uploadImage = async (req, res) => {
     patient_name,
     age,
     risk,
+    confidence,
     created_by
   ) VALUES (?, ?, ?, ?, ?, ?)
 `, [

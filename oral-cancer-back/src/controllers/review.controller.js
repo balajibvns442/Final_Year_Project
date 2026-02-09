@@ -4,11 +4,9 @@ exports.getPendingReviews = async (req, res) => {
   const [rows] = await pool.query(`
     SELECT
       review_id,
+      image_id,
       patient_name,
-      patient_phone,
       age,
-      visit_date,
-      image_url,
       risk,
       confidence
     FROM review_queue

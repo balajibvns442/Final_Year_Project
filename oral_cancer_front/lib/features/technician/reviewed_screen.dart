@@ -16,15 +16,31 @@ class _ReviewedCasesWidgetState extends State<ReviewedCasesWidget> {
   List _reviewed = [];
   bool _loading = true;
 
-  Future<void> _loadPendingCases() async {
-    final res = await ApiClient.get('/technician/reviewed');
+  Future<void> _loadReviewedCases() async {
+    try {
+      final res = await ApiClient.get('/technician/reviewed-cases', auth: true);
 
-    if (res.statusCode == 200) {
-      setState(() {
-        _reviewed = jsonDecode(res.body);
-        _loading = false;
-      });
+      if (res.statusCode == 200) {
+        setState(() {
+          _reviewed = jsonDecode(res.body);
+          _loading = false;
+        });
+      } else {
+        debugPrint('Error: ${res.statusCode}');
+        setState(() => _loading = false);
+      }
+    } catch (e) {
+      debugPrint('API error: $e');
+      setState(() => _loading = false);
     }
+  }
+
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loadReviewedCases();
   }
 
   @override

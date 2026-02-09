@@ -11,7 +11,7 @@ class RoleRouter {
         return TechnicianHomeScreen(name: name);
         // return TechnicianHome() ;
       case 'DOCTOR':
-        return const DoctorHome();
+        return DoctorHome(name: name,);
       default:
         return const Scaffold(
           body: Center(child: Text("Unknown role")),

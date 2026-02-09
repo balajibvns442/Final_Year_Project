@@ -5,6 +5,7 @@ const { authenticate } = require('../middleware/auth.middleware');
 const { allowRoles } = require('../middleware/role.middleware');
 const {
   getPendingReviews,
+  getCompletedReviews
   // submitReview
 } = require('../controllers/doctor.controller');
 

@@ -9,7 +9,15 @@ import '../../core/auth_storage.dart';
 
 class UploadScreen extends StatefulWidget {
   final int visitId;
-  const UploadScreen({super.key, required this.visitId});
+  final int patientId;
+  final String patientName;
+  final int age;
+  const UploadScreen(
+      {super.key,
+      required this.visitId,
+      required this.patientId,
+      required this.patientName,
+      required this.age});
 
   @override
   State<UploadScreen> createState() => _UploadScreenState();
@@ -58,6 +66,8 @@ class _UploadScreenState extends State<UploadScreen> {
     request.headers['Authorization'] = 'Bearer $token';
 
     request.fields['visit_id'] = widget.visitId.toString();
+    request.fields['patient_name'] = widget.patientName;
+    request.fields['age'] = widget.age.toString();
     request.files.add(
       await http.MultipartFile.fromPath('image', _image!.path),
     );
@@ -115,26 +125,20 @@ class _UploadScreenState extends State<UploadScreen> {
                 color: Colors.grey.shade200,
                 child: const Center(child: Text("No image selected")),
               ),
-
             const SizedBox(height: 20),
-
             ElevatedButton.icon(
               icon: const Icon(Icons.camera_alt),
               label: const Text("Capture Image"),
               onPressed: _pickImage,
             ),
-
             const SizedBox(height: 12),
-
             ElevatedButton(
               onPressed: _uploading || _image == null ? null : _uploadImage,
               child: _uploading
                   ? const CircularProgressIndicator(color: Colors.white)
                   : const Text("Upload & Analyze"),
             ),
-
             const SizedBox(height: 20),
-
             if (_risk != null)
               Column(
                 children: [
@@ -157,7 +161,6 @@ class _UploadScreenState extends State<UploadScreen> {
                   ),
                 ],
               ),
-
             if (_error != null)
               Padding(
                 padding: const EdgeInsets.only(top: 10),

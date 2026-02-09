@@ -36,11 +36,11 @@ exports.completeReview = async (req, res) => {
     WHERE id = ?
   `, [notes, doctorId, reviewId]);
 
-  // await db.query(`
-  //   UPDATE review_queue
-  //   SET status = 'REVIEWED'
-  //   WHERE review_id = ?
-  // `, [reviewId]);
+  await pool.query(`
+    UPDATE review_queue
+    SET status = 'REVIEWED'
+    WHERE review_id = ?
+  `, [reviewId]);
 
   res.json({ message: 'Review completed' });
 };

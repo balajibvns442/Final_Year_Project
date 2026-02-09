@@ -36,11 +36,12 @@ class _LoginScreenState extends State<LoginScreen> {
     }
     
     final role = await AuthStorage.getRole() ;
+    final name = await AuthStorage.getName() ;
     // Temporary navigation placeholder
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (_) => RoleRouter.routeByRole(role!),
+        builder: (_) => RoleRouter.routeByRole(role!,name!),
       ),
     );
   }

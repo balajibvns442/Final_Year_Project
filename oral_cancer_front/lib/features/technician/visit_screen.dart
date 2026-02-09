@@ -5,7 +5,8 @@ import '../../core/api_client.dart';
 
 class VisitScreen extends StatefulWidget {
   final int patientId;
-  const VisitScreen({super.key, required this.patientId});
+  final String patientName ;
+  const VisitScreen({super.key, required this.patientId, required this.patientName});
 
   @override
   State<VisitScreen> createState() => _VisitScreenState();
@@ -13,6 +14,9 @@ class VisitScreen extends StatefulWidget {
 
 class _VisitScreenState extends State<VisitScreen> {
   final _ageCtrl = TextEditingController();
+  final _symptomsCtrl = TextEditingController() ;
+  final _historyCtrl = TextEditingController() ;
+
   bool _loading = false;
   String? _error;
 
@@ -27,6 +31,8 @@ class _VisitScreenState extends State<VisitScreen> {
       {
         'patient_id': widget.patientId,
         'age': int.tryParse(_ageCtrl.text),
+        'symptoms': _symptomsCtrl.text.trim() ,
+        'history': _historyCtrl.text.trim() ,
       },
       auth: true,
     );
@@ -41,34 +47,103 @@ class _VisitScreenState extends State<VisitScreen> {
     final data = jsonDecode(res.body);
     final visitId = data['visit_id'];
 
-    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>UploadScreen(visitId: visitId))) ;
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_)=>UploadScreen(visitId: visitId,patientId: widget.patientId,patientName: widget.patientName, age: int.tryParse(_ageCtrl.text)!,))) ;
 
     // Next phase: navigate to image upload
   }
 
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     appBar: AppBar(title: const Text("Visit Details")),
+  //     body: Padding(
+  //       padding: const EdgeInsets.all(16),
+  //       child: Column(
+  //         children: [
+  //           TextField(
+  //             controller: _ageCtrl,
+  //             keyboardType: TextInputType.number,
+  //             decoration: const InputDecoration(labelText: "Age"),
+  //           ),
+  //           const SizedBox(height: 20),
+  //
+  //           if (_error != null)
+  //             Text(_error!, style: const TextStyle(color: Colors.red)),
+  //
+  //           ElevatedButton(
+  //             onPressed: _loading ? null : _createVisit,
+  //             child: _loading
+  //                 ? const CircularProgressIndicator()
+  //                 : const Text("Create Visit"),
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text("Visit Details")),
-      body: Padding(
+    return SafeArea(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            const Text(
+              "Visit Details",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 25,
+                fontWeight: FontWeight.bold,
+                color: Colors.black54,
+              ),
+            ),
+            const SizedBox(height: 25),
+
             TextField(
               controller: _ageCtrl,
               keyboardType: TextInputType.number,
-              decoration: const InputDecoration(labelText: "Age"),
+              decoration: const InputDecoration(
+                labelText: "Patient Age",
+                border: OutlineInputBorder(),
+              ),
             ),
             const SizedBox(height: 20),
+
+            TextField(
+              controller: _symptomsCtrl,
+              decoration: const InputDecoration(
+                labelText: "Symptoms Observed",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            TextField(
+              controller: _historyCtrl,
+              decoration: const InputDecoration(
+                labelText: "Medical History",
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+            const SizedBox(height: 25),
 
             if (_error != null)
               Text(_error!, style: const TextStyle(color: Colors.red)),
 
+            const SizedBox(height: 10),
+
             ElevatedButton(
-              onPressed: _loading ? null : _createVisit,
+              onPressed: _loading ? null : _createVisit ,
               child: _loading
-                  ? const CircularProgressIndicator()
-                  : const Text("Create Visit"),
+                  ? const SizedBox(
+                height: 20,
+                width: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              )
+                  : const Text("Continue"),
             ),
           ],
         ),

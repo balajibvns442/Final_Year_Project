@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:oral_cancer_front/widgets/review_card.dart';
 import '../../core/api_client.dart';
 import '../../widgets/logout_button.dart';
 import 'review_detail_screen.dart';
@@ -33,17 +34,6 @@ class _DoctorHomeState extends State<DoctorHome> {
     _loadReviews();
   }
 
-  Color _riskColor(String risk) {
-    switch (risk) {
-      case 'HIGH':
-        return Colors.red;
-      case 'MEDIUM':
-        return Colors.orange;
-      default:
-        return Colors.green;
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,31 +47,26 @@ class _DoctorHomeState extends State<DoctorHome> {
         itemCount: _reviews.length,
         itemBuilder: (_, i) {
           final r = _reviews[i];
-          return Card(
-            child: ListTile(
-              title: Text(r['patient_name']),
-              subtitle: Text(
-                "Risk: ${r['risk']} (${(r['confidence'] * 100).toStringAsFixed(1)}%)",
-                style: TextStyle(color: _riskColor(r['risk'])),
-              ),
-              trailing: const Icon(Icons.arrow_forward_ios),
-              onTap: () async {
-                final _updated = await Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) =>
-                        ReviewDetailScreen(review: r),
-                  ),
-                );
+          return GestureDetector(
+            child: ReviewCard(review: _reviews[i]),
+            onTap: () async {
+              final _updated = await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) =>
+                      ReviewDetailScreen(review: r),
+                ),
+              );
 
-                if( _updated==true ){
-                  _loadReviews() ;
-                }
-              },
-            ),
+              if( _updated==true ){
+                _loadReviews() ;
+              }
+            },
           );
         },
       ),
     );
   }
 }
+
+

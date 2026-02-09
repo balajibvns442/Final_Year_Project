@@ -8,18 +8,6 @@ const {
   // submitReview
 } = require('../controllers/doctor.controller');
 
-router.get(
-  '/pending',
-  authenticate,
-  allowRoles('DOCTOR'),
-  getPendingReviews
-);
-
-// router.post(
-//   '/submit',
-//   authenticate,
-//   allowRoles('DOCTOR'),
-//   submitReview
-// );
+router.get('/completed-reviews', authenticate, allowRoles('DOCTOR'), getCompletedReviews);
 
 module.exports = router;

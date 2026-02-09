@@ -5,6 +5,7 @@ const FormData = require('form-data');
 
 exports.uploadImage = async (req, res) => {
   const { visit_id } = req.body;
+  const { patient_name, age } = req.body; // snapshot from request (not DB)
 
   if (!visit_id) {
     return res.status(400).json({ error: 'visit_id required' });
@@ -49,60 +50,32 @@ exports.uploadImage = async (req, res) => {
     const predictionId = predResult.insertId;
 
     // 🔹 CREATE REVIEW ENTRY
-    await pool.query(
+    const [reviewResult] = await pool.query(
       'INSERT INTO reviews (prediction_id, status) VALUES (?, "PENDING")',
       [predictionId]
     );
 
+    const reviewId = reviewResult.insertId;
 
     // after image, prediction, review are created
 
-    // const reviewId = reviewResult.insertId;
-
-//     // fetch snapshot data ONCE (single join, one-time cost)
-//     const [rows] = await db.query(`
-//   SELECT
-//     p.name AS patient_name,
-//     p.phone AS patient_phone,
-//     v.age,
-//     DATE(v.visit_date) AS visit_date,
-//     i.image_path,
-//     pr.risk,
-//     pr.confidence
-//   FROM predictions pr
-//   JOIN images i ON pr.image_id = i.id
-//   JOIN visits v ON i.visit_id = v.id
-//   JOIN patients p ON v.patient_id = p.id
-//   WHERE pr.id = ?
-// `, [predictionId]);
-
-//     const snap = rows[0];
-
-//     // insert snapshot
-//     await db.query(`
-//   INSERT INTO review_queue (
-//     review_id,
-//     prediction_id,
-//     patient_name,
-//     patient_phone,
-//     age,
-//     visit_date,
-//     image_url,
-//     risk,
-//     confidence
-//   ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-// `, [
-//       reviewId,
-//       predictionId,
-//       snap.patient_name,
-//       snap.patient_phone,
-//       snap.age,
-//       snap.visit_date,
-//       snap.image_path,
-//       snap.risk,
-//       snap.confidence
-//     ]);
-
+    await pool.query(`
+  INSERT INTO review_queue (
+    review_id,
+    image_id,
+    patient_name,
+    age,
+    risk,
+    created_by
+  ) VALUES (?, ?, ?, ?, ?, ?)
+`, [
+      reviewId,
+      imageId,
+      patient_name,   // from request snapshot
+      age,            // visit age snapshot
+      risk,           // from ML
+      req.user.userId     // technician id (JWT)
+    ]);
 
 
     // 5️⃣ Respond
@@ -150,7 +123,7 @@ exports.getImage = async (req, res) => {
 };
 
 exports.getImageByPath = async (req, res) => {
-  console.log(req.params) ;
+  console.log(req.params);
   const { image_path } = req.params;
 
   try {

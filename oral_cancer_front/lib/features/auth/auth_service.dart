@@ -11,7 +11,7 @@ class AuthService {
 
     if (res.statusCode == 200) {
       final data = jsonDecode(res.body);
-      await AuthStorage.save(data['token'], data['role']);
+      await AuthStorage.save(data['token'], data['role'], data['name']);
       return true;
     }
     return false;

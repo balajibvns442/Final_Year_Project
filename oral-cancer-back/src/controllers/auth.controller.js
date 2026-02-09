@@ -11,7 +11,7 @@ exports.login = async (req, res) => {
 
   try {
     const [rows] = await pool.query(
-      'SELECT id, password, role FROM users WHERE phone = ?',
+      'SELECT id, name, password, role FROM users WHERE phone = ?',
       [phone]
     );
 
@@ -34,9 +34,12 @@ exports.login = async (req, res) => {
       { expiresIn: '1d' }
     );
 
+    console.log(`${user.name} logged in as ${user.role}`);
+
     res.json({
       token,
-      role: user.role
+      role: user.role,
+      name : user.name,
     });
   } catch (err) {
     console.error(err);

@@ -2,7 +2,7 @@
 const pool = require('../db');
 
 exports.createOrGetPatient = async (req, res) => {
-  const { name, phone, gender } = req.body;
+  const { name, phone, gender, email, address } = req.body;
 
   if (!name || !phone || phone.trim() === '' ) {
     return res.status(400).json({
@@ -33,8 +33,8 @@ exports.createOrGetPatient = async (req, res) => {
     // console.log(req.user.id + " is creating patient");
     // 2️⃣ Create new patient
     const [result] = await pool.query(
-      'INSERT INTO patients (name, phone, created_by, gender) VALUES (?, ?, ?, ?)',
-      [name, phone, req.user.userId ,gender]
+      'INSERT INTO patients (name, phone, created_by, gender, email, address) VALUES (?, ?, ?, ?, ?, ?)',
+      [name, phone, req.user.userId ,gender, email, address]
     );
 
     res.json({

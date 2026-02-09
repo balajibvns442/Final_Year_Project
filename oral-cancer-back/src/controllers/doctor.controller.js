@@ -52,4 +52,27 @@ exports.submitReview = async (req, res) => {
     console.error(err);
     res.status(500).json({ error: 'Review submission failed' });
   }
-};
+}
+
+exports.getCompletedReviews = async (req, res) => {
+  const doctorId = req.user.userId;
+
+  const [rows] = await pool.query(`
+    SELECT
+      review_id,
+        image_id,
+        patient_name,
+        age,
+        risk,
+        confidence,
+        created_by,
+
+    FROM review_queue
+    WHERE status = 'COMPLETED' AND reviewed_by = ?
+    ORDER BY created_at DESC
+      `,[doctorId]);
+      ;
+
+  res.json(rows);
+    
+}

@@ -1,7 +1,7 @@
 const pool = require('../db');
 
 exports.createVisit = async (req, res) => {
-  const { patient_id, age } = req.body;
+  const { patient_id, age, symptoms, history } = req.body;
 
   if (!patient_id || !age) {
     return res.status(400).json({
@@ -17,9 +17,11 @@ exports.createVisit = async (req, res) => {
 
   try {
     const [result] = await pool.query(
-      'INSERT INTO visits (patient_id, age, visit_date) VALUES (?, ?, CURDATE())',
-      [patient_id, age]
+      'INSERT INTO visits (patient_id, age, visit_date, symptoms, history) VALUES (?, ?, CURDATE(), ?, ?)',
+      [patient_id, age, symptoms, history]
     );
+
+    console.log("creating visit for patient " + patient_id + " by user " + req.user.userId + " with symptoms: " + symptoms + ", history: " + history);
 
     res.json({
       message: 'Visit created',

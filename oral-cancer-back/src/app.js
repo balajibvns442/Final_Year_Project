@@ -9,6 +9,7 @@ const visitRoutes = require('./routes/visit.routes');
 const imageRoutes = require('./routes/image.routes');
 const reviewRoutes = require('./routes/review.routes');
 const doctorRoutes = require('./routes/doctor.routes');
+const technicianRoutes = require('./routes/technician.routes');
 
 app.use(cors());
 app.use(express.json());
@@ -19,7 +20,7 @@ app.use('/visits', visitRoutes);
 app.use('/images', imageRoutes);
 app.use('/reviews', reviewRoutes);
 app.use('/doctor', doctorRoutes);
-
+app.use('/technician', technicianRoutes);
 
 app.get('/health', (req, res) => {
   res.json({ status: 'OK' });

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-import '../features/technician/technician_home.dart';
+import 'package:oral_cancer_front/features/technician/technician_home_scren.dart';
 import '../features/doctor/doctor_home.dart';
 
 class RoleRouter {
-  static Widget routeByRole(String role) {
+  static Widget routeByRole(String role, String name)  {
+
+    print("routing to :" + role) ;
     switch (role) {
       case 'TECHNICIAN':
-        return const TechnicianHome();
+        return TechnicianHomeScreen(name: name);
+        // return TechnicianHome() ;
       case 'DOCTOR':
         return const DoctorHome();
       default:

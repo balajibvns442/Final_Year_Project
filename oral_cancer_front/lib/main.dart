@@ -13,10 +13,12 @@ class OralCancerApp extends StatelessWidget {
   Future<Widget> _getStartScreen() async {
     final token = await AuthStorage.getToken();
     final role = await AuthStorage.getRole();
+    final name = await AuthStorage.getName();
 
-    if (token != null && role != null) {
-      return RoleRouter.routeByRole(role);
+    if (token != null && role != null && name !=null) {
+      return RoleRouter.routeByRole(role,name);
     }
+    await AuthStorage.clear();
     return const LoginScreen();
   }
 
@@ -29,11 +31,14 @@ class OralCancerApp extends StatelessWidget {
       home: FutureBuilder(
         future: _getStartScreen(),
         builder: (context, snapshot) {
-          if (!snapshot.hasData) {
-            return const Scaffold(
-              body: Center(child: CircularProgressIndicator()),
-            );
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
           }
+
+          if (snapshot.hasError) {
+            return const Center(child: Text("Something went wrong"));
+          }
+
           return snapshot.data!;
         },
       ),
